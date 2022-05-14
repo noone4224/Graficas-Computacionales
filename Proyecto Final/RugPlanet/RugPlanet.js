@@ -75,6 +75,7 @@ function createScene(canvas) {
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 45, canvas.width / canvas.height, 1, 20 );
+    
     camera.position.z = 10;
     scene.add(camera);
 
@@ -113,19 +114,18 @@ function createScene(canvas) {
     const mercuryTextureURL = "./Textures/mercurio.jpeg"
     const mercuryTexture = new THREE.TextureLoader().load(mercuryTextureURL)
     const mercuryMaterial = new THREE.MeshPhongMaterial({map: mercuryTexture})
-    geometry = new THREE.BoxGeometry(1, 1.5, 1)
+    geometry = new THREE.BoxGeometry(1, 1, 1.5)
     mercury = new THREE.Mesh(geometry, mercuryMaterial)
     mercury.position.set(2.4,0,0)
 
 
     // Add mercury
     mercuryGroup.add(mercury)
+    mercuryGroup.add(camera)
     
     scene.add(sistmesolar);
     scene.add(mercuryGroup)
     sistmesolar.add(sun)
-
-
 }
 
 main();
