@@ -6,7 +6,8 @@ import * as CONTROLS from "../../libs/three.js/controls/OrbitControls.js"
 let renderer = null, scene = null, camera = null;
 let sistmesolar = null;
 let mercury = null;
-
+let moveLeft = false, moveRight = false;
+let velocity, direction;
 let mercuryGroup = null;
 
 const duration = 5000; // ms
@@ -22,20 +23,28 @@ function main()
 /**
  * Updates the rotation of the objects in the scene
  */
-function animate() 
-{
+function animate() {
+
     const now = Date.now();
     const deltat = now - currentTime;
     currentTime = now;
     const fract = deltat / duration;
     const angle = Math.PI * 2 * fract;
 
+    
+
      // Cochesito
      const fractMercurio = deltat / 3000;
      const angleMercurio = Math.PI * 2 * fractMercurio;
-     mercuryGroup.rotation.y += angleMercurio;
 
-
+    sistmesolar.rotation.x += angle / 2;
+    mercuryGroup.rotation.x -=angleMercurio/2
+    // Debo de hacerlo rotar en z
+     
+    // esto lo hace rotar a la iuzquierda 
+    //  mercury.rotation.z += angleMercurio;
+    // esto lo hace rotar a la derecha
+    //  mercury.rotation.z -= angleMercurio;
 }
 
 /**
@@ -44,12 +53,78 @@ function animate()
 function update()
 {
     requestAnimationFrame(function() { update(); });
-    
+
+    const now = Date.now();
+    const deltat = now - currentTime;
+    const fractMercurio = deltat / 3000;
+    const angleMercurio = Math.PI * 2 * fractMercurio;
     // Render the scene
+
+    if (moveLeft == true) {
+
+        if(mercury.rotation.z <.5) {
+            mercury.rotation.z += angleMercurio-.025;
+        }
+        sistmesolar.rotation.x += angleMercurio / 2;
+        sistmesolar.rotation.y -=angleMercurio/2 
+        mercuryGroup.rotation.y +=angleMercurio/2
+        mercuryGroup.rotation.x -=angleMercurio/2
+    }
+
+    if (moveRight == true) {
+        
+        if(mercury.rotation.z >-.5) {
+            mercury.rotation.z -= angleMercurio-.025;
+        }
+        sistmesolar.rotation.x += angleMercurio / 2;
+        sistmesolar.rotation.y +=angleMercurio/2 
+        mercuryGroup.rotation.y -=angleMercurio/2
+        mercuryGroup.rotation.x -=angleMercurio/2
+    }
     
     renderer.render( scene, camera );
     // Spin the cube for next frame
     animate();
+}
+
+function onKeyDown ( event )
+{
+    switch ( event.keyCode ) {
+
+
+        case 37: // left
+        case 65: // a
+            moveLeft = true; 
+            console.log("L")
+            break;
+
+        case 39: // right
+        case 68: // d
+            moveRight = true;
+            console.log("R")
+            break;
+
+    }
+
+}
+
+function onKeyUp( event ) {
+
+    switch( event.keyCode ) {
+
+        case 37: // left
+        case 65: // a
+            moveLeft = false;
+            mercury.rotation.z = 0
+            break;
+
+        case 39: // right
+        case 68: // d
+            moveRight = false;
+            mercury.rotation.z = 0
+            break;
+
+    }
 }
 
 /**
@@ -74,9 +149,9 @@ function createScene(canvas) {
      scene.background = texture;
 
     // Add  a camera so we can view the scene
-    camera = new THREE.PerspectiveCamera( 45, canvas.width / canvas.height, 1, 20 );
+    camera = new THREE.PerspectiveCamera( 50, canvas.width / canvas.height, 10, 20 );
     
-    camera.position.z = 10;
+    camera.position.z = 15;
     scene.add(camera);
 
     let controls = new CONTROLS.OrbitControls( camera, renderer.domElement );
@@ -88,6 +163,9 @@ function createScene(canvas) {
     // Position the light out from the scene, pointing at the origin
     light.position.set(-.5, .2, 1);
     scene.add(light);
+
+    document.addEventListener( 'keydown', onKeyDown, false );
+    document.addEventListener( 'keyup', onKeyUp, false );
 
     // This light globally illuminates all objects in the scene equally.
     // Cannot cast shadows
@@ -104,19 +182,30 @@ function createScene(canvas) {
     const sunTextureURL = "./Textures/grass.jpeg"
     const sunTexture = new THREE.TextureLoader().load(sunTextureURL)
     const sunMaterial = new THREE.MeshPhongMaterial({map: sunTexture})
-    let geometry = new THREE.SphereGeometry(2, 40, 40)
+    let geometry = new THREE.SphereGeometry(4, 40, 40)
     let sun = new THREE.Mesh(geometry, sunMaterial)
     sun.position.set(0,0,0)
 
+    let gemoetryOrbitMercury = new THREE.RingGeometry(4.3,3.99,30);
+
+    const mercuryOrbitMaterial = new THREE.MeshBasicMaterial({
+        color: 0x0000,
+        side: THREE.DoubleSide,
+    });
+
+    // Mercury Orbit
+    let orbitMercury = new THREE.Mesh(gemoetryOrbitMercury, mercuryOrbitMaterial);
+    sistmesolar.add(orbitMercury);
+    orbitMercury.position.set(0,0,0);
 
 
-    // Mercurio
+    // Cochesito
     const mercuryTextureURL = "./Textures/mercurio.jpeg"
     const mercuryTexture = new THREE.TextureLoader().load(mercuryTextureURL)
     const mercuryMaterial = new THREE.MeshPhongMaterial({map: mercuryTexture})
-    geometry = new THREE.BoxGeometry(1, 1, 1.5)
+    geometry = new THREE.BoxGeometry(.5, .75, .5)
     mercury = new THREE.Mesh(geometry, mercuryMaterial)
-    mercury.position.set(2.4,0,0)
+    mercury.position.set(0,0,4)
 
 
     // Add mercury
