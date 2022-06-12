@@ -31,8 +31,6 @@ function animate() {
     const fract = deltat / duration;
     const angle = Math.PI * 2 * fract;
 
-    
-
      // Cochesito
      const fractMercurio = deltat / 3000;
      const angleMercurio = Math.PI * 2 * fractMercurio;
@@ -62,8 +60,9 @@ function update()
 
     if (moveLeft == true) {
 
-        if(mercury.rotation.z <.5) {
-            mercury.rotation.z += angleMercurio-.025;
+        if(mercury.rotation.y < 2 && mercury.rotation.y>1.54) {
+            console.log(mercury.rotation.y)
+            mercury.rotation.y += angleMercurio-.025;
         }
         sistmesolar.rotation.x += angleMercurio / 2;
         sistmesolar.rotation.y -=angleMercurio/2 
@@ -73,8 +72,9 @@ function update()
 
     if (moveRight == true) {
         
-        if(mercury.rotation.z >-.5) {
-            mercury.rotation.z -= angleMercurio-.025;
+        if(mercury.rotation.y <1.56 && mercury.rotation.y>1) {
+            console.log(mercury.rotation.y)
+            mercury.rotation.y -= angleMercurio-.025;
         }
         sistmesolar.rotation.x += angleMercurio / 2;
         sistmesolar.rotation.y +=angleMercurio/2 
@@ -115,13 +115,13 @@ function onKeyUp( event ) {
         case 37: // left
         case 65: // a
             moveLeft = false;
-            mercury.rotation.z = 0
+            mercury.rotation.y = 1.55 
             break;
 
         case 39: // right
         case 68: // d
             moveRight = false;
-            mercury.rotation.z = 0
+            mercury.rotation.y = 1.55 
             break;
 
     }
@@ -149,9 +149,9 @@ function createScene(canvas) {
      scene.background = texture;
 
     // Add  a camera so we can view the scene
-    camera = new THREE.PerspectiveCamera( 50, canvas.width / canvas.height, 10, 20 );
+    camera = new THREE.PerspectiveCamera( 50, canvas.width / canvas.height, 10, 1000 );
     
-    camera.position.z = 15;
+    camera.position.set(0, 100, 0);
     scene.add(camera);
 
     let controls = new CONTROLS.OrbitControls( camera, renderer.domElement );
@@ -182,11 +182,11 @@ function createScene(canvas) {
     const sunTextureURL = "./Textures/grass.jpeg"
     const sunTexture = new THREE.TextureLoader().load(sunTextureURL)
     const sunMaterial = new THREE.MeshPhongMaterial({map: sunTexture})
-    let geometry = new THREE.SphereGeometry(4, 40, 40)
+    let geometry = new THREE.SphereGeometry(25, 40, 40)
     let sun = new THREE.Mesh(geometry, sunMaterial)
     sun.position.set(0,0,0)
 
-    let gemoetryOrbitMercury = new THREE.RingGeometry(4.3,3.99,30);
+    let gemoetryOrbitMercury = new THREE.RingGeometry(25.5,25,100);
 
     const mercuryOrbitMaterial = new THREE.MeshBasicMaterial({
         color: 0x0000,
@@ -199,15 +199,17 @@ function createScene(canvas) {
     orbitMercury.position.set(0,0,0);
 
 
-    // Cochesito
-    const mercuryTextureURL = "./Textures/mercurio.jpeg"
-    const mercuryTexture = new THREE.TextureLoader().load(mercuryTextureURL)
-    const mercuryMaterial = new THREE.MeshPhongMaterial({map: mercuryTexture})
-    geometry = new THREE.BoxGeometry(.5, .75, .5)
-    mercury = new THREE.Mesh(geometry, mercuryMaterial)
-    mercury.position.set(0,0,4)
+    // // Cochesito
+    // const mercuryTextureURL = "./Textures/mercurio.jpeg"
+    // const mercuryTexture = new THREE.TextureLoader().load(mercuryTextureURL)
+    // const mercuryMaterial = new THREE.MeshPhongMaterial({map: mercuryTexture})
+    // geometry = new THREE.BoxGeometry(.5, .75, .5)
+    // mercury = new THREE.Mesh(geometry, mercuryMaterial)
+    // mercury.position.set(0,0,4)
 
-
+    mercury = createCar()
+    mercury.position.set(0,15,0)
+    mercury.rotation.y = 1.55 
     // Add mercury
     mercuryGroup.add(mercury)
     mercuryGroup.add(camera)
@@ -216,5 +218,92 @@ function createScene(canvas) {
     scene.add(mercuryGroup)
     sistmesolar.add(sun)
 }
+
+
+function createCar() {
+    const car = new THREE.Group();
+  
+    const backWheel = createWheels();
+    backWheel.position.y = 11;
+    backWheel.position.x = -3;
+    car.add(backWheel);
+  
+    const frontWheel = createWheels();
+    frontWheel.position.y = 11;
+    frontWheel.position.x = 2;
+    car.add(frontWheel);
+  
+    const main = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(10, 2.5, 5),
+      new THREE.MeshLambertMaterial({ color: 0xa52523 })
+    );
+    main.position.y = 12;
+    car.add(main);
+  
+    const carFrontTexture = getCarFrontTexture();
+  
+    const carBackTexture = getCarFrontTexture();
+  
+    const carRightSideTexture = getCarSideTexture();
+  
+    const carLeftSideTexture = getCarSideTexture();
+    carLeftSideTexture.center = new THREE.Vector2(0.5, 0.5);
+    carLeftSideTexture.rotation = Math.PI;
+    carLeftSideTexture.flipY = false;
+  
+    const cabin = new THREE.Mesh(new THREE.BoxBufferGeometry(5.5, 2, 4), [
+      new THREE.MeshLambertMaterial({ map: carFrontTexture }),
+      new THREE.MeshLambertMaterial({ map: carBackTexture }),
+      new THREE.MeshLambertMaterial({ color: 0xffffff }), // top
+      new THREE.MeshLambertMaterial({ color: 0xffffff }), // bottom
+      new THREE.MeshLambertMaterial({ map: carRightSideTexture }),
+      new THREE.MeshLambertMaterial({ map: carLeftSideTexture })
+    ]);
+    cabin.position.x = -2;
+    cabin.position.y = 14.5;
+    car.add(cabin);
+  
+    return car;
+  }
+  
+  function createWheels() {
+    const geometry = new THREE.BoxBufferGeometry(2, 2, 5.5);
+    //const geometry = new THREE.CylinderGeometry( 2, 2, 5.5, 32 );
+    const material = new THREE.MeshLambertMaterial({ color: 0x333333 });
+    const wheel = new THREE.Mesh(geometry, material);
+    return wheel;
+  }
+  
+  function getCarFrontTexture() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 64;
+    canvas.height = 32;
+    const context = canvas.getContext("2d");
+  
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, 64, 32);
+  
+    context.fillStyle = "#666666";
+    context.fillRect(8, 8, 48, 24);
+  
+    return new THREE.CanvasTexture(canvas);
+  }
+  
+  function getCarSideTexture() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 128;
+    canvas.height = 32;
+    const context = canvas.getContext("2d");
+  
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, 128, 32);
+  
+    context.fillStyle = "#666666";
+    context.fillRect(10, 8, 38, 24);
+    context.fillRect(58, 8, 60, 24);
+  
+    return new THREE.CanvasTexture(canvas);
+  }
+  
 
 main();
