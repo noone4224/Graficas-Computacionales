@@ -9,7 +9,10 @@ let mercury = null;
 let moveLeft = false, moveRight = false;
 let velocity, direction;
 let mercuryGroup = null;
-
+let asteroid = null;
+let animator = null, loopAnimation = true;
+let asteroids = [];
+let asteroidsGroup = null;
 const duration = 5000; // ms
 let currentTime = Date.now();
 
@@ -17,6 +20,9 @@ function main()
 {
     const canvas = document.getElementById("webglcanvas");
     createScene(canvas);
+
+    setInterval(createAsteroid, 4000)
+
     update();
 }
 
@@ -54,14 +60,70 @@ function update()
 
     const now = Date.now();
     const deltat = now - currentTime;
+
+
     const fractMercurio = deltat / 3000;
     const angleMercurio = Math.PI * 2 * fractMercurio;
     // Render the scene
+    let killAsteroidX = false
+    let killAsteroidZ = false
+    let killAsteroidY = false
+   
+    for(const asteroid of asteroids){
+        killAsteroidX = false
+        killAsteroidZ = false
+        killAsteroidY = false
+
+        // X asteroid movement 
+        if (asteroid.position.x > .5) {
+            asteroid.position.x -= 0.02 * deltat;
+            if(asteroid.position.x < 1) {
+                killAsteroidX = true
+            }
+        }
+
+        if (asteroid.position.x < .5) {
+            asteroid.position.x += 0.02 * deltat;
+            killAsteroidX = true
+        }
+
+        // Y asteroid Movement
+        if (asteroid.position.y > .5) {
+            asteroid.position.y -= 0.02 * deltat;
+            if(asteroid.position.y < 1) {
+                killAsteroidY = true
+            }
+        }
+        if (asteroid.position.y < .5) {
+            asteroid.position.y += 0.02 * deltat;
+            killAsteroidY = true
+        }
+
+        // Z asteroid Movement
+        if (asteroid.position.z > .5) {
+            asteroid.position.z -= 0.02 * deltat;
+            if(asteroid.position.z < 1) {
+                killAsteroidZ = true
+            }
+        }
+        if (asteroid.position.z < .5) {
+            asteroid.position.z += 0.02 * deltat;
+            killAsteroidZ = true
+        }
+
+        console.log(asteroid.position.x)
+        console.log(asteroid.position.y)
+        console.log(asteroid.position.z)
+
+        if (killAsteroidY && killAsteroidX && killAsteroidZ) {
+            asteroids.splice(asteroids.indexOf(asteroid), 1);
+            asteroidsGroup.children = asteroids;
+        }
+    }
 
     if (moveLeft == true) {
 
         if(mercury.rotation.y < 2 && mercury.rotation.y>1.54) {
-            console.log(mercury.rotation.y)
             mercury.rotation.y += angleMercurio-.025;
         }
         sistmesolar.rotation.x += angleMercurio / 2;
@@ -73,7 +135,6 @@ function update()
     if (moveRight == true) {
         
         if(mercury.rotation.y <1.56 && mercury.rotation.y>1) {
-            console.log(mercury.rotation.y)
             mercury.rotation.y -= angleMercurio-.025;
         }
         sistmesolar.rotation.x += angleMercurio / 2;
@@ -140,6 +201,7 @@ function createScene(canvas) {
     
     // Create a new Three.js scene
     scene = new THREE.Scene();
+    asteroidsGroup = new THREE.Object3D;
 
      //create the background texture
      let backgroundUrl = "Textures/galaxy.jpeg";
@@ -182,7 +244,7 @@ function createScene(canvas) {
     const sunTextureURL = "./Textures/grass.jpeg"
     const sunTexture = new THREE.TextureLoader().load(sunTextureURL)
     const sunMaterial = new THREE.MeshPhongMaterial({map: sunTexture})
-    let geometry = new THREE.SphereGeometry(25, 40, 40)
+    let geometry = new THREE.SphereGeometry(40, 40, 40)
     let sun = new THREE.Mesh(geometry, sunMaterial)
     sun.position.set(0,0,0)
 
@@ -208,17 +270,37 @@ function createScene(canvas) {
     // mercury.position.set(0,0,4)
 
     mercury = createCar()
-    mercury.position.set(0,15,0)
+    mercury.position.set(0,29.1,4)
     mercury.rotation.y = 1.55 
     // Add mercury
     mercuryGroup.add(mercury)
     mercuryGroup.add(camera)
     
     scene.add(sistmesolar);
-    scene.add(mercuryGroup)
+    scene.add(mercuryGroup);
+    sistmesolar.add(asteroidsGroup)
     sistmesolar.add(sun)
 }
 
+function createAsteroid() {
+
+    const sunTextureURL = "./Textures/grass.jpeg"
+    const sunTexture = new THREE.TextureLoader().load(sunTextureURL)
+    const sunMaterial = new THREE.MeshPhongMaterial({map: sunTexture})
+
+    let geometry = new THREE.SphereGeometry(4, 10, 40)
+    let asteroid = new THREE.Mesh(geometry, sunMaterial)
+
+    asteroid.position.set(
+        Math.floor((Math.random() * 100) + 1) * (Math.round(Math.random()) ? 1 : -1), // X
+        Math.floor((Math.random() * 100) + 1) * (Math.round(Math.random()) ? 1 : -1), // Y
+        Math.floor((Math.random() * 100) + 1) * (Math.round(Math.random()) ? 1 : -1) // Z
+    );
+
+    asteroidsGroup.add(asteroid)
+    mercuryGroup.add(asteroidsGroup)
+    asteroids.push(asteroid)
+}
 
 function createCar() {
     const car = new THREE.Group();
@@ -305,5 +387,4 @@ function createCar() {
     return new THREE.CanvasTexture(canvas);
   }
   
-
 main();
