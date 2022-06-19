@@ -3,17 +3,42 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Three.js Scene Graph</title>
 
-		<link rel="stylesheet" href="../css/main.css" />
-		<link rel="stylesheet" href="../css/threejsscene.css" />
+		<link rel="stylesheet" href="../RugPlanet/css/Rug.css" />
 		<script src="../../libs/keyframe.js/keyframe.js"></script>
 
 		<script type="module" defer src="RugPlanet.js"></script>
+		
+		<style>
+            body {
+              width: 100vw;
+              height: 100vh;
+              margin: 0px;
+              border: 0;
+              overflow: hidden; 
+            }
+        </style>
 
 	</head>
 	<body> 
+		<div id="blocker">
 
+			<div id="instructions">
+				<span style="font-size:40px">Click to play</span>
+				<br />
+				(A, D, Left Arrow, Right Arrow = Move Click = Pause)
+            </div>
+        </div>
+
+		<div id="blockerPause">
+
+			<div id="pauseMessage">
+				<span style="font-size:40px">Press P to Resume</span>
+				<br />
+				(Press P to Resume, Press N to start again or Press M to return to Main Menu)
+            </div>
+        </div>
 		<div id="container">
-			<canvas id="webglcanvas" width=800 height=600></canvas>
+			<canvas id="webglcanvas" width=1300 height=800></canvas>
 		</div>
 	</body>
 

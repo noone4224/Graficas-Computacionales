@@ -7,24 +7,59 @@ let renderer = null, scene = null, camera = null;
 let sistmesolar = null;
 let mercury = null;
 let moveLeft = false, moveRight = false;
-let velocity, direction;
+let blocker = null, instructions = null, pauseMessage = null, blockerPause=null;
 let mercuryGroup = null;
-let asteroid = null;
-let animator = null, loopAnimation = true;
 let asteroids = [];
 let asteroidsGroup = null;
 const duration = 5000; // ms
 let currentTime = Date.now();
 
+function initialInstructions() {
+    blocker = document.getElementById( 'blocker' );
+    instructions = document.getElementById( 'instructions' );
+
+    if (blocker.style.display === 'none') {
+        blocker.style.display = 'block'
+        instructions.style.display = '';
+      }
+    else {
+        instructions.style.display = 'none';
+        blocker.style.display = 'none';
+    }
+  }
+
+  function pauseGame() {
+    blockerPause = document.getElementById( 'blockerPause' );
+    pauseMessage = document.getElementById( 'pauseMessage' );
+
+    if (blockerPause.style.display === 'none') {
+        blockerPause.style.display = 'block'
+        pauseMessage.style.display = '';
+      }
+    else {
+        pauseMessage.style.display = 'none';
+        blockerPause.style.display = 'none';
+    }
+  }
+
+  function returnMenu() {
+
+  }
+
+  function startAgain() {
+    
+  }
+
 function main() 
 {
     const canvas = document.getElementById("webglcanvas");
-    createScene(canvas);
+    createScene(canvas);    
 
     setInterval(createAsteroid, 4000)
 
     update();
 }
+
 
 /**
  * Updates the rotation of the objects in the scene
@@ -56,6 +91,7 @@ function animate() {
  */
 function update()
 {
+    document.addEventListener( 'click', initialInstructions);
     requestAnimationFrame(function() { update(); });
 
     const now = Date.now();
@@ -75,22 +111,22 @@ function update()
         killAsteroidY = false
 
         // X asteroid movement 
-        if (asteroid.position.x > .5) {
+        if (asteroid.position.x > 2) {
             asteroid.position.x -= 0.02 * deltat;
             if(asteroid.position.x < 1) {
                 killAsteroidX = true
             }
         }
 
-        if (asteroid.position.x < .5) {
+        if (asteroid.position.x < 2) {
             asteroid.position.x += 0.02 * deltat;
             killAsteroidX = true
         }
 
         // Y asteroid Movement
-        if (asteroid.position.y > .5) {
+        if (asteroid.position.y > 2) {
             asteroid.position.y -= 0.02 * deltat;
-            if(asteroid.position.y < 1) {
+            if(asteroid.position.y < 2) {
                 killAsteroidY = true
             }
         }
@@ -100,22 +136,27 @@ function update()
         }
 
         // Z asteroid Movement
-        if (asteroid.position.z > .5) {
+        if (asteroid.position.z > 2) {
             asteroid.position.z -= 0.02 * deltat;
-            if(asteroid.position.z < 1) {
+            if(asteroid.position.z < 2) {
                 killAsteroidZ = true
             }
         }
-        if (asteroid.position.z < .5) {
+        if (asteroid.position.z < 2) {
             asteroid.position.z += 0.02 * deltat;
             killAsteroidZ = true
         }
 
-        console.log(asteroid.position.x)
-        console.log(asteroid.position.y)
-        console.log(asteroid.position.z)
-
         if (killAsteroidY && killAsteroidX && killAsteroidZ) {
+            asteroids.splice(asteroids.indexOf(asteroid), 1);
+            asteroidsGroup.children = asteroids;
+        }
+
+        if (asteroid.position.x >2300 || asteroid.position.y > 300 || asteroid.position>300) {
+            asteroids.splice(asteroids.indexOf(asteroid), 1);
+            asteroidsGroup.children = asteroids;
+        }
+        if (asteroid.position.x <-300 || asteroid.position.y <-300 || asteroid.position<-300) {
             asteroids.splice(asteroids.indexOf(asteroid), 1);
             asteroidsGroup.children = asteroids;
         }
@@ -164,7 +205,14 @@ function onKeyDown ( event )
             moveRight = true;
             console.log("R")
             break;
-
+        case 80:
+            pauseGame();
+            break;
+        case 77:
+            returnMenu();
+            break;
+        case 78:
+            startAgain();
     }
 
 }
@@ -248,7 +296,7 @@ function createScene(canvas) {
     let sun = new THREE.Mesh(geometry, sunMaterial)
     sun.position.set(0,0,0)
 
-    let gemoetryOrbitMercury = new THREE.RingGeometry(25.5,25,100);
+    let gemoetryOrbitMercury = new THREE.RingGeometry(40.5,25,100);
 
     const mercuryOrbitMaterial = new THREE.MeshBasicMaterial({
         color: 0x0000,
@@ -292,7 +340,7 @@ function createAsteroid() {
     let asteroid = new THREE.Mesh(geometry, sunMaterial)
 
     asteroid.position.set(
-        Math.floor((Math.random() * 100) + 1) * (Math.round(Math.random()) ? 1 : -1), // X
+        Math.floor((Math.random() * 100) + 5) * (Math.round(Math.random()) ? 1 : -5), // X
         Math.floor((Math.random() * 100) + 1) * (Math.round(Math.random()) ? 1 : -1), // Y
         Math.floor((Math.random() * 100) + 1) * (Math.round(Math.random()) ? 1 : -1) // Z
     );
