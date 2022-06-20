@@ -294,7 +294,7 @@ function createScene(canvas) {
     asteroidsGroup = new THREE.Object3D;
 
      //create the background texture
-     let backgroundUrl = "Textures/galaxy.jpeg";
+     let backgroundUrl = "Textures/stars.png";
      let texture = new THREE.TextureLoader().load(backgroundUrl);
  
      // Set the background texture
@@ -303,7 +303,7 @@ function createScene(canvas) {
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 50, canvas.width / canvas.height, 10, 1000 );
     
-    camera.position.set(0, 100, 0);
+    camera.position.set(0, 150, 0);
     scene.add(camera);
 
     let controls = new CONTROLS.OrbitControls( camera, renderer.domElement );
@@ -331,7 +331,7 @@ function createScene(canvas) {
     mercuryGroup.position.set(0, 0, 0);
 
     // Sun
-    const sunTextureURL = "./Textures/grass.jpeg"
+    const sunTextureURL = "./Textures/grass2.jpeg"
     const sunTexture = new THREE.TextureLoader().load(sunTextureURL)
     const sunMaterial = new THREE.MeshPhongMaterial({map: sunTexture})
     let geometry = new THREE.SphereGeometry(40, 40, 40)
@@ -359,11 +359,11 @@ function createScene(canvas) {
     // mercury = new THREE.Mesh(geometry, mercuryMaterial)
     // mercury.position.set(0,0,4)
 
-    // mercury = createCar()
-    // mercury.position.set(0,29.1,4)
-    // mercury.rotation.y = 1.55 
-    // // Add mercury
-    // mercuryGroup.add(mercury)
+    mercury = createCar(0xa52523)
+    mercury.position.set(0,29.1,4)
+    mercury.rotation.y = 1.55 
+    // Add mercury
+    mercuryGroup.add(mercury)
     mercuryGroup.add(camera)
     
     scene.add(sistmesolar);
@@ -374,7 +374,7 @@ function createScene(canvas) {
 
 function createAsteroid() {
 
-    const sunTextureURL = "./Textures/grass.jpeg"
+    const sunTextureURL = "./Textures/lavaDos.jpeg"
     const sunTexture = new THREE.TextureLoader().load(sunTextureURL)
     const sunMaterial = new THREE.MeshPhongMaterial({map: sunTexture})
 
@@ -390,6 +390,10 @@ function createAsteroid() {
     asteroidsGroup.add(asteroid)
     mercuryGroup.add(asteroidsGroup)
     asteroids.push(asteroid)
+}
+
+function createCrater() {
+
 }
 
 function createCar(color) {
@@ -411,6 +415,7 @@ function createCar(color) {
         leftLight.position.x = 2.7
         leftLight.rotation.z = 45.5
         car.add(leftLight)
+
     const rightLight = createLights();
         rightLight.position.y = 12
         rightLight.position.z = -1.1
@@ -451,15 +456,15 @@ function createCar(color) {
     return car;
   }
   
-  function createWheels() {
+function createWheels() {
     const geometry = new THREE.BoxBufferGeometry(2, 2, 5.5);
     //const geometry = new THREE.CylinderGeometry( 2, 2, 5.5, 32 );
     const material = new THREE.MeshLambertMaterial({ color: 0x333333 });
     const wheel = new THREE.Mesh(geometry, material);
     return wheel;
-  }
+}
   
-  function getCarFrontTexture() {
+function getCarFrontTexture() {
     const canvas = document.createElement("canvas");
     canvas.width = 64;
     canvas.height = 32;
@@ -472,9 +477,9 @@ function createCar(color) {
     context.fillRect(8, 8, 48, 24);
   
     return new THREE.CanvasTexture(canvas);
-  }
+}
   
-  function getCarSideTexture() {
+function getCarSideTexture() {
     const canvas = document.createElement("canvas");
     canvas.width = 128;
     canvas.height = 32;
@@ -488,13 +493,16 @@ function createCar(color) {
     context.fillRect(58, 8, 60, 24);
   
     return new THREE.CanvasTexture(canvas);
-  }
+}
 
-  function createLights() {
+function createLights() {
+
+    // Aquí debo de añadir las luces
     const geometry = new THREE.CylinderGeometry( .75, .75, 5, 32 );
     const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
     const cylinder = new THREE.Mesh( geometry, material );
+
     return cylinder;
-  }
+}
   
 main();
