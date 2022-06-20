@@ -404,6 +404,19 @@ function createCar(color) {
     frontWheel.position.y = 11;
     frontWheel.position.x = 2;
     car.add(frontWheel);
+
+    const leftLight = createLights();
+        leftLight.position.y = 12
+        leftLight.position.z = 1.1
+        leftLight.position.x = 2.7
+        leftLight.rotation.z = 45.5
+        car.add(leftLight)
+    const rightLight = createLights();
+        rightLight.position.y = 12
+        rightLight.position.z = -1.1
+        rightLight.position.x = 2.7
+        rightLight.rotation.z = 45.5
+        car.add(rightLight)
   
     const main = new THREE.Mesh(
       new THREE.BoxBufferGeometry(10, 2.5, 5),
@@ -475,6 +488,13 @@ function createCar(color) {
     context.fillRect(58, 8, 60, 24);
   
     return new THREE.CanvasTexture(canvas);
+  }
+
+  function createLights() {
+    const geometry = new THREE.CylinderGeometry( .75, .75, 5, 32 );
+    const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+    const cylinder = new THREE.Mesh( geometry, material );
+    return cylinder;
   }
   
 main();
