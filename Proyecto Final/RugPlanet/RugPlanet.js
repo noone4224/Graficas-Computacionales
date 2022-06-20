@@ -13,16 +13,19 @@ let asteroids = [];
 let asteroidsGroup = null;
 const duration = 5000; // ms
 let currentTime = Date.now();
+let isPause = null;
 
 function initialInstructions() {
     blocker = document.getElementById( 'blocker' );
     instructions = document.getElementById( 'instructions' );
 
     if (blocker.style.display === 'none') {
+        isPause = true;
         blocker.style.display = 'block'
         instructions.style.display = '';
       }
     else {
+        isPause = false;
         instructions.style.display = 'none';
         blocker.style.display = 'none';
     }
@@ -33,10 +36,12 @@ function initialInstructions() {
     pauseMessage = document.getElementById( 'pauseMessage' );
 
     if (blockerPause.style.display === 'none') {
+        isPause = true;
         blockerPause.style.display = 'block'
         pauseMessage.style.display = '';
       }
     else {
+        isPause = false;
         pauseMessage.style.display = 'none';
         blockerPause.style.display = 'none';
     }
@@ -47,7 +52,7 @@ function initialInstructions() {
   }
 
   function startAgain() {
-    
+    window.location.reload();
   }
 
 function main() 
@@ -183,10 +188,11 @@ function update()
         mercuryGroup.rotation.y -=angleMercurio/2
         mercuryGroup.rotation.x -=angleMercurio/2
     }
-    
+    if (isPause === false) {
+        animate();
+    }
     renderer.render( scene, camera );
     // Spin the cube for next frame
-    animate();
 }
 
 function onKeyDown ( event )
@@ -205,13 +211,13 @@ function onKeyDown ( event )
             moveRight = true;
             console.log("R")
             break;
-        case 80:
+        case 80: // P = Pause
             pauseGame();
             break;
-        case 77:
+        case 77: // M = Main Menu
             returnMenu();
             break;
-        case 78:
+        case 78: // N = New Game
             startAgain();
     }
 
