@@ -48,13 +48,39 @@ function initialInstructions() {
   }
 
   function returnMenu() {
-
+    window.location.reload();
   }
 
   function startAgain() {
     window.location.reload();
   }
 
+  function redCar() {
+    mercuryGroup.remove(mercury)
+    mercury = createCar(0xa52523)
+    mercury.position.set(0,29.1,4)
+    mercury.rotation.y = 1.55 
+    // Add mercury
+    mercuryGroup.add(mercury)
+  }
+
+  function greenCar() {
+    mercuryGroup.remove(mercury)
+    mercury = createCar(0x25A523)
+    mercury.position.set(0,29.1,4)
+    mercury.rotation.y = 1.55 
+    // Add mercury
+    mercuryGroup.add(mercury)
+  }
+
+  function blueCar() {
+    mercuryGroup.remove(mercury)
+    mercury = createCar(0x2325A5)
+    mercury.position.set(0,29.1,4)
+    mercury.rotation.y = 1.55 
+    // Add mercury
+    mercuryGroup.add(mercury)
+  }
 function main() 
 {
     const canvas = document.getElementById("webglcanvas");
@@ -219,6 +245,16 @@ function onKeyDown ( event )
             break;
         case 78: // N = New Game
             startAgain();
+            break;
+        case 71:
+            greenCar();
+            break;
+        case 82: 
+            redCar();
+            break;
+        case 66:
+            blueCar();
+            break;
     }
 
 }
@@ -323,11 +359,11 @@ function createScene(canvas) {
     // mercury = new THREE.Mesh(geometry, mercuryMaterial)
     // mercury.position.set(0,0,4)
 
-    mercury = createCar()
-    mercury.position.set(0,29.1,4)
-    mercury.rotation.y = 1.55 
-    // Add mercury
-    mercuryGroup.add(mercury)
+    // mercury = createCar()
+    // mercury.position.set(0,29.1,4)
+    // mercury.rotation.y = 1.55 
+    // // Add mercury
+    // mercuryGroup.add(mercury)
     mercuryGroup.add(camera)
     
     scene.add(sistmesolar);
@@ -356,7 +392,7 @@ function createAsteroid() {
     asteroids.push(asteroid)
 }
 
-function createCar() {
+function createCar(color) {
     const car = new THREE.Group();
   
     const backWheel = createWheels();
@@ -371,7 +407,7 @@ function createCar() {
   
     const main = new THREE.Mesh(
       new THREE.BoxBufferGeometry(10, 2.5, 5),
-      new THREE.MeshLambertMaterial({ color: 0xa52523 })
+      new THREE.MeshLambertMaterial({ color: color })
     );
     main.position.y = 12;
     car.add(main);
