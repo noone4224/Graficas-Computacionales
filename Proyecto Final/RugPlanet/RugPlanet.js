@@ -21,6 +21,8 @@ let n = 0;
 let lastN = 0;
 let spotLight = null;
 let meteorLight = null;
+let isNight = true;
+let ambientLight = null;
 
 function initialInstructions() {
     blocker = document.getElementById( 'blocker' );
@@ -103,6 +105,20 @@ function initialInstructions() {
     // Add mercury
     mercuryGroup.add(mercury)
   }
+
+  function setDay() {
+    if(isNight) {
+        scene.remove(ambientLight)
+        ambientLight = new THREE.AmbientLight(0xff1523, .11);
+        scene.add(ambientLight);
+        isNight =false
+    } else {
+        scene.remove(ambientLight)
+        ambientLight = new THREE.AmbientLight(0xffccaa, 1);
+        scene.add(ambientLight);
+        isNight = true
+    }
+  }
 function main() 
 {
     const canvas = document.getElementById("webglcanvas");
@@ -136,8 +152,8 @@ function animate() {
 /**
  * Runs the update loop: updates the objects in the scene
  */
-function update()
-{
+function update() {
+
     if(gameStart === false){
         document.addEventListener( 'click', initialInstructions);
     }
@@ -292,21 +308,27 @@ function onKeyDown ( event )
         case 78: // N = New Game
             startAgain();
             break;
-        case 71:
+        case 71: // G = Green Car
             if (gameStart === false) {
                 greenCar();
             }
             break;
-        case 82: 
+        case 82: // R = Red Car
         if (gameStart === false) {
             redCar();
         }
             break;
-        case 66:
+        case 66: // B = Blue Car
             if (gameStart === false) {
                 blueCar();
             }
             break;
+        case 84: //T
+        if(gameStart === false){
+            console.log("presionando T")
+            setDay();
+        }
+        break;
     }
 
 }
@@ -364,10 +386,11 @@ function createScene(canvas) {
     document.addEventListener( 'keydown', onKeyDown, false );
     document.addEventListener( 'keyup', onKeyUp, false );
 
+    ambientLight = new THREE.AmbientLight(0xff1523, .11);
+    scene.add(ambientLight);
+
     // This light globally illuminates all objects in the scene equally.
     // Cannot cast shadows
-    const ambientLight = new THREE.AmbientLight(0xff1523, .11);
-    scene.add(ambientLight);
 
     sistmesolar = new THREE.Object3D;
     sistmesolar.position.set(0, 0, 0);
