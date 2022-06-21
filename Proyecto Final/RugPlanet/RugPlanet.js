@@ -9,6 +9,7 @@ let mercury = null;
 let moveLeft = false, moveRight = false;
 let blocker = null, instructions = null, pauseMessage = null, blockerPause=null;
 let mercuryGroup = null;
+let lightsGroup = null;
 let asteroids = [];
 let asteroidsGroup = null;
 const duration = 5000; // ms
@@ -18,6 +19,8 @@ let isPause = null;
 let gameStart = false;
 let n = 0;
 let lastN = 0;
+let spotLight = null;
+let meteorLight = null;
 
 function initialInstructions() {
     blocker = document.getElementById( 'blocker' );
@@ -357,20 +360,13 @@ function createScene(canvas) {
 
     let controls = new CONTROLS.OrbitControls( camera, renderer.domElement );
     controls.update();
-    
-    // Add a directional light to show off the objects
-    const light = new THREE.PointLight( 0xffffff, 1.25, 0);
-
-    // Position the light out from the scene, pointing at the origin
-    light.position.set(-.5, .2, 1);
-    scene.add(light);
 
     document.addEventListener( 'keydown', onKeyDown, false );
     document.addEventListener( 'keyup', onKeyUp, false );
 
     // This light globally illuminates all objects in the scene equally.
     // Cannot cast shadows
-    const ambientLight = new THREE.AmbientLight(0xffccaa, 1);
+    const ambientLight = new THREE.AmbientLight(0xff1523, .11);
     scene.add(ambientLight);
 
     sistmesolar = new THREE.Object3D;
@@ -398,15 +394,6 @@ function createScene(canvas) {
     let orbitMercury = new THREE.Mesh(gemoetryOrbitMercury, mercuryOrbitMaterial);
     sistmesolar.add(orbitMercury);
     orbitMercury.position.set(0,0,0);
-
-
-    // // Cochesito
-    // const mercuryTextureURL = "./Textures/mercurio.jpeg"
-    // const mercuryTexture = new THREE.TextureLoader().load(mercuryTextureURL)
-    // const mercuryMaterial = new THREE.MeshPhongMaterial({map: mercuryTexture})
-    // geometry = new THREE.BoxGeometry(.5, .75, .5)
-    // mercury = new THREE.Mesh(geometry, mercuryMaterial)
-    // mercury.position.set(0,0,4)
 
     mercury = createCar(0xa52523)
     mercury.position.set(0,29.1,4)
@@ -436,6 +423,12 @@ function createAsteroid() {
         Math.floor((Math.random() * 100) + 1) * (Math.round(Math.random()) ? 1 : -1) // Z
     );
 
+    meteorLight = new THREE.SpotLight (0xa52523);
+    meteorLight.position.set(1, -5, 0);
+    meteorLight.power = 1.5
+    meteorLight.penumbra = 1
+
+    asteroid.add(meteorLight)
     asteroidsGroup.add(asteroid)
     mercuryGroup.add(asteroidsGroup)
     asteroids.push(asteroid)
@@ -551,7 +544,33 @@ function createLights() {
     const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
     const cylinder = new THREE.Mesh( geometry, material );
 
-    return cylinder;
+    lightsGroup = new THREE.Object3D;
+    lightsGroup.position.set(0, 0, 0);
+
+    spotLight = new THREE.SpotLight (0xffff00);
+    spotLight.position.set(1, -5, 0);
+    spotLight.power = 2
+    spotLight.penumbra = .1
+    // spotLight.intensity = 2
+    // spotLight.angle = Math.PI/2.8
+
+    lightsGroup.add(cylinder)
+    lightsGroup.add(spotLight)
+
+    return lightsGroup;
 }
   
+// class Particle {
+//     constructor() {
+//         var scale = 20 + Math.random()*20;
+//         var nLines = 5 + Math.floor(Math.random()*5);
+//         var nRows = 5 + Math.floor(Math.random()*5)
+//     }
+// }
+// const createSmoke = () => {
+//     let p = getParticle();
+//     dropParticle(p);
+// }
+// const getParticle = () => {
+// }
 main();
