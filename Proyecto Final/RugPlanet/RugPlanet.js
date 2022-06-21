@@ -18,6 +18,7 @@ let isPause = null;
 let gameStart = false;
 let n = 0;
 let lastN = 0;
+
 function initialInstructions() {
     blocker = document.getElementById( 'blocker' );
     instructions = document.getElementById( 'instructions' );
@@ -134,7 +135,6 @@ function animate() {
  */
 function update()
 {
-    console.log(isPause)
     if(gameStart === false){
         document.addEventListener( 'click', initialInstructions);
     }
@@ -149,8 +149,33 @@ function update()
     let killAsteroidX = false
     let killAsteroidZ = false
     let killAsteroidY = false
-   
-    for(const asteroid of asteroids){
+
+    let killCarX = false
+    let killCarY = false
+    let killCarZ = false
+
+    for(const asteroid of asteroids) {
+
+        killCarX = false
+        killCarY = false
+        killCarZ = false
+
+        if(asteroid.position.x <= 3 && asteroid.position.x >= -3 ) {
+            killCarX = true
+        }
+        if(asteroid.position.y <=42 && asteroid.position.y >=38 ) {
+            killCarY = true
+        }
+        if(asteroid.position.z <= 7.5 && asteroid.position.z >= 2 ) {
+            killCarZ = true
+        }
+        if (killCarX === true && killCarY === true && killCarZ === true) {
+            window.location.reload();
+            // console.log("choco")
+            // console.log("asteroid:" , asteroid.position)
+            // console.log("car:" , mercury.position)
+        }
+
         killAsteroidX = false
         killAsteroidZ = false
         killAsteroidY = false
