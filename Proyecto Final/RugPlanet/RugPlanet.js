@@ -124,7 +124,7 @@ function main()
     const canvas = document.getElementById("webglcanvas");
     createScene(canvas);    
 
-    setInterval(createAsteroid, 4000)
+    setInterval(createAsteroid, 1000)
 
     update();
 }
@@ -324,10 +324,8 @@ function onKeyDown ( event )
             }
             break;
         case 84: //T
-        if(gameStart === false){
             console.log("presionando T")
             setDay();
-        }
         break;
     }
 
@@ -455,10 +453,6 @@ function createAsteroid() {
     asteroidsGroup.add(asteroid)
     mercuryGroup.add(asteroidsGroup)
     asteroids.push(asteroid)
-}
-
-function createCrater() {
-
 }
 
 function createCar(color) {
