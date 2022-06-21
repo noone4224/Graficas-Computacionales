@@ -13,19 +13,34 @@ let asteroids = [];
 let asteroidsGroup = null;
 const duration = 5000; // ms
 let currentTime = Date.now();
+let isPlaying = null;
 let isPause = null;
-
+let gameStart = false;
+let n = 0;
+let lastN = 0;
 function initialInstructions() {
     blocker = document.getElementById( 'blocker' );
     instructions = document.getElementById( 'instructions' );
 
-    if (blocker.style.display === 'none') {
-        isPause = true;
+    if (blocker.style.display === 'none' && gameStart === false) {
+        isPlaying = false;
         blocker.style.display = 'block'
         instructions.style.display = '';
       }
     else {
-        isPause = false;
+        gameStart = true
+        let scoreH = document.getElementById("scoreText");
+        window.setInterval(function(){
+            scoreH.innerHTML = "Score: " + n;
+            if (isPause === false || isPause == null) {
+                n++;
+            }
+            else {
+                n = lastN
+            }
+        },1000);
+
+        isPlaying = true;
         instructions.style.display = 'none';
         blocker.style.display = 'none';
     }
@@ -36,11 +51,14 @@ function initialInstructions() {
     pauseMessage = document.getElementById( 'pauseMessage' );
 
     if (blockerPause.style.display === 'none') {
+        lastN = n
         isPause = true;
+        isPlaying = false;
         blockerPause.style.display = 'block'
         pauseMessage.style.display = '';
       }
     else {
+        isPlaying = true;
         isPause = false;
         pauseMessage.style.display = 'none';
         blockerPause.style.display = 'none';
@@ -109,12 +127,6 @@ function animate() {
 
     sistmesolar.rotation.x += angle / 2;
     mercuryGroup.rotation.x -=angleMercurio/2
-    // Debo de hacerlo rotar en z
-     
-    // esto lo hace rotar a la iuzquierda 
-    //  mercury.rotation.z += angleMercurio;
-    // esto lo hace rotar a la derecha
-    //  mercury.rotation.z -= angleMercurio;
 }
 
 /**
@@ -122,12 +134,14 @@ function animate() {
  */
 function update()
 {
-    document.addEventListener( 'click', initialInstructions);
+    console.log(isPause)
+    if(gameStart === false){
+        document.addEventListener( 'click', initialInstructions);
+    }
     requestAnimationFrame(function() { update(); });
 
     const now = Date.now();
     const deltat = now - currentTime;
-
 
     const fractMercurio = deltat / 3000;
     const angleMercurio = Math.PI * 2 * fractMercurio;
@@ -214,7 +228,7 @@ function update()
         mercuryGroup.rotation.y -=angleMercurio/2
         mercuryGroup.rotation.x -=angleMercurio/2
     }
-    if (isPause === false) {
+    if (isPlaying === true) {
         animate();
     }
     renderer.render( scene, camera );
@@ -238,22 +252,32 @@ function onKeyDown ( event )
             console.log("R")
             break;
         case 80: // P = Pause
+        if(isPlaying || isPause) {
             pauseGame();
+        }
             break;
         case 77: // M = Main Menu
+        if(isPause) {
             returnMenu();
+        }
             break;
         case 78: // N = New Game
             startAgain();
             break;
         case 71:
-            greenCar();
+            if (gameStart === false) {
+                greenCar();
+            }
             break;
         case 82: 
+        if (gameStart === false) {
             redCar();
+        }
             break;
         case 66:
-            blueCar();
+            if (gameStart === false) {
+                blueCar();
+            }
             break;
     }
 
